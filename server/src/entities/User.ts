@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, DeleteDateColumn } from "typeorm";
 import { Todo } from "./Todo";
 
 @Entity()
@@ -19,8 +19,8 @@ export class User {
   @Column()
   password!: string;
 
-  @Column({ default: false })
-  deleted!: boolean;
+  @DeleteDateColumn()
+  deletedAt?: Date;
 
   @OneToMany(() => Todo, todo => todo.user)
   todos!: Todo[];

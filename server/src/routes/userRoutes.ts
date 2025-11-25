@@ -1,9 +1,10 @@
 import { Router } from "express";
+import * as UserController from "../controllers/userController";
 
 const router = Router();
 
-router.get("/test", (req, res) => {
-  res.json({ message: "User route working!" });
-});
+router.post("/register", UserController.register);
+router.post("/login", UserController.login);
+router.delete("/delete", UserController.deleteAccount);
 
 export default router;
