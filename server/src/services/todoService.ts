@@ -28,6 +28,8 @@ export const createTodo = async (userId: number, data: any) => {
     title: data.title,
     description: data.description,
     status: data.status || "pending",
+    category: data.category || "General",
+    priority: data.priority || "Low",
     user: user
   });
 
@@ -71,7 +73,7 @@ export const deleteTodo = async (userId: number, todoId: number) => {
 };
 
 export const insertTodos = async (userId: number, items: any[]) => {
-  
+
   const user = await checkUser(userId);
 
   const todos = items.map(item => {
@@ -79,6 +81,8 @@ export const insertTodos = async (userId: number, items: any[]) => {
     todo.title = item.title;
     todo.description = item.description || ""
     todo.status = item.status || "pending";
+    todo.category = item.category || "General";
+    todo.priority = item.priority || "Low";
     todo.user = user;
     return todo;
   });

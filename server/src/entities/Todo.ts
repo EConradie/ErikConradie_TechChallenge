@@ -13,8 +13,14 @@ export class Todo {
   @Column()
   description!: string;
 
-  @Column({ default: "pending" })
+  @Column({ default: "Pending" })
   status!: string;
+
+  @Column({ default: "General" })
+  category?: string;
+
+  @Column({ default: "Low" })
+  priority?: string;
 
   @CreateDateColumn()
   created_at!: Date;

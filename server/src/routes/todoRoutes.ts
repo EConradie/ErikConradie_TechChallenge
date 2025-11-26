@@ -16,5 +16,7 @@ router.post(
   upload.single("file"),
   todoController.bulkUploadTodos
 );
+router.post("/quick-todo", auth, todoController.createQuickTodo);
+
 
 export default router;

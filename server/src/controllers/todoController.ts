@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import * as TodoService from "../services/todoService";
 import { parseCSV } from "../utils/csvParser";
+import { parseQuickTodo } from "../services/ChatGPTService";
+import { createTodo } from "../services/todoService";
 
 export const create = async (req: Request, res: Response) => {
   try {
@@ -83,5 +85,26 @@ export const bulkUploadTodos = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
+  }
+};
+
+export const createQuickTodo = async (req: Request, res: Response) => {
+  const userId = req.userId!;
+  const { input } = req.body as { input: string };
+
+  try {
+    const aiTodo = await parseQuickTodo(input);
+
+    const newTodo = await createTodo(userId, {
+      title: aiTodo.title,
+      description: aiTodo.description,
+      category: aiTodo.category,
+      priority: aiTodo.priority
+    });
+
+    return res.status(201).json(newTodo);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ message: "AI Quick Todo failed" });
   }
 };
