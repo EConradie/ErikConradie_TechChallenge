@@ -5,9 +5,24 @@ import { User } from "../entities/User";
 const todoRepo = AppDataSource.getRepository(Todo);
 const userRepo = AppDataSource.getRepository(User);
 
-export const createTodo = async (userId: number, data: any) => {
+
+const checkUser = async (userId: number): Promise<User> => {
   const user = await userRepo.findOne({ where: { id: userId } });
   if (!user) throw new Error("User not found");
+
+  return user;
+}
+
+const checkUserTodo = async (userId: number, todoId: number): Promise<Todo> => {
+  const todo = await todoRepo.findOne({ where: { id: todoId, user: { id: userId } } });
+  if (!todo) throw new Error("Todo not found");
+
+  return todo;
+}
+
+export const createTodo = async (userId: number, data: any) => {
+  
+  const user = await checkUser(userId);
 
   const todo = todoRepo.create({
     title: data.title,
@@ -21,6 +36,9 @@ export const createTodo = async (userId: number, data: any) => {
 };
 
 export const getTodos = async (userId: number) => {
+
+  await checkUser (userId);
+
   return await todoRepo.find({
     where: { user: { id: userId } },
     order: { created_at: "DESC" }
@@ -28,20 +46,12 @@ export const getTodos = async (userId: number) => {
 };
 
 export const getTodoById = async (userId: number, todoId: number) => {
-  const todo = await todoRepo.findOne({
-    where: { id: todoId, user: { id: userId } } 
-  });
-
-  if (!todo) throw new Error("Todo not found");
-  return todo;
+  return await checkUserTodo(userId, todoId);
 };
 
 export const updateTodo = async (userId: number, todoId: number, data: any) => {
-  const todo = await todoRepo.findOne({
-    where: { id: todoId, user: { id: userId } }
-  });
 
-  if (!todo) throw new Error("Todo not found");
+  const todo = await checkUserTodo(userId, todoId);
 
   todo.title = data.title ?? todo.title;
   todo.description = data.description ?? todo.description;
@@ -52,11 +62,8 @@ export const updateTodo = async (userId: number, todoId: number, data: any) => {
 };
 
 export const deleteTodo = async (userId: number, todoId: number) => {
-  const todo = await todoRepo.findOne({
-    where: { id: todoId, user: { id: userId } }
-  });
-
-  if (!todo) throw new Error("Todo not found");
+  
+  const todo = await checkUserTodo(userId, todoId);
 
   await todoRepo.remove(todo);
 
@@ -64,8 +71,8 @@ export const deleteTodo = async (userId: number, todoId: number) => {
 };
 
 export const insertTodos = async (userId: number, items: any[]) => {
-  const user = await userRepo.findOne({ where: { id: userId } });
-  if (!user) throw new Error("User not found");
+  
+  const user = await checkUser(userId);
 
   const todos = items.map(item => {
     const todo = new Todo();

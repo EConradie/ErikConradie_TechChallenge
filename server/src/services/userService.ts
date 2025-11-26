@@ -1,4 +1,4 @@
-import  AppDataSource  from "../dataSource";
+import AppDataSource from "../dataSource";
 import { User } from "../entities/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -11,7 +11,7 @@ export const register = async (data: any) => {
   // Only check users that are not soft deleted
   const existing = await userRepo.findOne({
     where: { email },
-    withDeleted: false
+    withDeleted: false,
   });
 
   if (existing) throw new Error("Email already in use");
@@ -22,7 +22,7 @@ export const register = async (data: any) => {
     name,
     surname,
     email,
-    password: hashedPassword
+    password: hashedPassword,
   });
 
   await userRepo.save(user);
@@ -33,7 +33,11 @@ export const register = async (data: any) => {
 export const login = async (data: any) => {
   const { email, password } = data;
 
-  const user = await userRepo.findOne({ where: { email } });
+  const user = await userRepo.findOne({
+    where: { email },
+    select: ["id", "email", "password", "name", "surname"],
+  });
+
   if (!user) throw new Error("Invalid credentials");
 
   const match = await bcrypt.compare(password, user.password);
