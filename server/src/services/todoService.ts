@@ -27,7 +27,7 @@ export const createTodo = async (userId: number, data: any) => {
   const todo = todoRepo.create({
     title: data.title,
     description: data.description,
-    status: data.status || "pending",
+    status: data.status || "Pending",
     category: data.category || "General",
     priority: data.priority || "Low",
     user: user
@@ -58,6 +58,8 @@ export const updateTodo = async (userId: number, todoId: number, data: any) => {
   todo.title = data.title ?? todo.title;
   todo.description = data.description ?? todo.description;
   todo.status = data.status ?? todo.status;
+  todo.category = data.category ?? todo.category;
+  todo.priority = data.priority ?? todo.priority;
 
   await todoRepo.save(todo);
   return todo;
@@ -79,7 +81,7 @@ export const insertTodos = async (userId: number, items: any[]) => {
   const todos = items.map(item => {
     const todo = new Todo();
     todo.title = item.title;
-    todo.description = item.description || ""
+    todo.description = item.description;
     todo.status = item.status || "pending";
     todo.category = item.category || "General";
     todo.priority = item.priority || "Low";
