@@ -21,7 +21,7 @@ export const login = async (req: Request, res: Response) => {
 
 export const deleteAccount = async (req: Request, res: Response) => {
   try {
-    const userId = req.body.userId;
+    const userId = req.userId!;
     const result = await UserService.deleteAccount(userId);
     return res.json(result);
   } catch (error: any) {
